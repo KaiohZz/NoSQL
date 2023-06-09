@@ -2,7 +2,10 @@ import { initializeApp } from "firebase/app";
 import { 
     getAuth, 
     connectAuthEmulator,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
 } from "firebase/auth";
 
 // TODO: Replace the following with your app's Firebase project configuration
@@ -15,8 +18,6 @@ const firebaseConfig = {
      messagingSenderId: "180075886396",
      appId: "1:180075886396:web:902cc1cdaf76bd0f2e9039"
 };
-
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -32,4 +33,31 @@ const loginEmailPassword = async () => {
 
     const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
     console.log(userCredential.user);
+}
+
+const createAccount = async () => {
+    const loginEmail = txtEmail.value;
+    const loginPassword = txt.password.value;
+
+    const userCredential = await createUserWithEmailAndPassword(auth, loginEmail, loginPassword);
+    console.log(userCredential.user);
+}
+
+const monitorAuthState = async () => {
+    onAuthStateChanged(auth, user => {
+        if(user) {
+            console.log(user);
+            showApp();
+            showLoginState();
+
+            hideLoginError();
+        } else {
+            showLoginForm();
+            lblAuthState.innerHTML = "Você não está logado";
+        }
+    })
+}
+
+const logout = async () => {
+    await signOut(auth);
 }
